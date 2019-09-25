@@ -1,4 +1,4 @@
-sourceBasePath: https://cdn.jsdelivr.net/gh/eswildens/Shepard/src
+sourceBasePath: https://cdn.jsdelivr.net/gh/ericswildens/shepard/src
 commands:
   host_add:
     sourcePath: /host_add.js
