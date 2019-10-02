@@ -4,7 +4,7 @@ function main(params) {
   if (!params.secrets || !params.secrets.awsCostExplorerAccessKeyId || !params.secrets.awsCostExplorerSecretAccessKeyId ||
     !params.secrets.awsCostExporerRegion == null) {
     return { text: "You must create secrets for awsCostExplorerAccessKeyId, awsCostExplorerSecretAccessKeyId " +
-      and awsCostExporerRegion to use this command " };
+      "and awsCostExporerRegion to use this command " };
   }
 
   var costexplorer = new AWS.CostExplorer({
