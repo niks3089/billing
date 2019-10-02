@@ -1,5 +1,10 @@
 sourceBasePath: https://cdn.jsdelivr.net/gh/ericswildens/shepard@latest/src
 commands:
+  awsbill:
+    sourcePath: /awsbill.js
+    description: Shows your AWS bill
+    options:
+      - name: detail
   host_add:
     sourcePath: /host_add.js
     description: Adds a host
