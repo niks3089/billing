@@ -12,6 +12,7 @@ function main(params) {
     secretAccessKey: params.secrets.awsCostExplorerSecretAccessKeyId,
     region: params.secrets.awsCostExplorerRegion
   });
+  
   // determine billing period start/end. toISOString() is UTC (GMT) time, which is what AWS bills in
   let now = new Date();
   let firstOfThisMonth = new Date(now.getUTCFullYear(), now.getUTCMonth(), 1);
