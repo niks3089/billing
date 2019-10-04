@@ -5,9 +5,14 @@ commands:
     description: Shows your AWS bill
     options:
       - name: detail
-  host_add:
-    sourcePath: /host_add.js
-    description: Adds a host
+  datadogbill:
+    sourcePath: /datadogbill.js
+    description: Shows your Datadog bill
+    options:
+      -name: detail
+  test:
+    sourcePath: /test.js
+    description: Test command
     parameters:
       - name: hostname
       - name: ip_address
@@ -16,13 +21,3 @@ commands:
       - name: ttl
         value: seconds
       - name: just_a_flag
-  host_delete:
-    sourcePath: /host_delete.js
-    description: Deletes a host
-    parameters:
-      - name: hostname
-  host_list:
-    sourcePath: /host_list.js
-    description: Lists hosts
-    parameters:
-      - name: match
