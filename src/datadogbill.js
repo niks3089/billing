@@ -140,14 +140,18 @@ function calcCosts(hostsJson, timeseriesJson, syntheticsJson) {
 
     let detail = hostsCosts.text + " " + metricsCosts.text + " " + syntheticsCosts.text;
 
-    return { response_type: 'in_channel', text: "Datadog projected cost this month $" + cost.toFixed(2) + " Projected cost next month $" + forwardCost.toFixed(2) + "\n\nDetail: " + detail };
+    return { body: { response_type: 'in_channel', text: "Datadog projected cost this month $" + cost.toFixed(2) + " Projected cost next month $" + forwardCost.toFixed(2) + "\n\nDetail: " + detail } };
 }
 
 function main(params) {
-  const api_key = 
-  const application_key =
+  if (!params.secrets || !params.secrets.datadogApiKey || !params.secrets.datadogApplicationKey) {
+    return { body: { text: "You must create secrets for datadogApiKey and datadogApplicationKey to use this command " } };
+  }
+  
+  const api_key = params.secrets.datadogApiKey;
+  const application_key = params.secrets.datadogApplicationKey;
 
-let now = new Date();
+  let now = new Date();
   let firstOfThisMonth = new Date(now.getUTCFullYear(), now.getUTCMonth(), 1);
 
   let start_hr = firstOfThisMonth.toISOString().substring(0, 13);
@@ -166,17 +170,17 @@ let now = new Date();
               return calcCosts(JSON.parse(hostsHtml), JSON.parse(timeseriesHtml), JSON.parse(syntheticsHtml));
             },
             function(error) {
-              return { text: "ERROR " + error};
+              return { body: { text: "ERROR " + error} };
             }
           );
         },
         function(error) {
-          return { text: "ERROR " + error};
+          return { body: { text: "ERROR " + error} };
         }
       );
     },
     function(error) {
-      return { text: "ERROR " + error};
+      return { body: { text: "ERROR " + error} };
     }
   );
 }
