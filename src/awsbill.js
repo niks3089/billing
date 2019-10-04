@@ -1,15 +1,17 @@
+// jshint esversion: 8
+
 function main(params) {
   AWS = require('aws-sdk');
-
-  if (!params.secrets || !params.secrets.awsCostExplorerAccessKeyId || !params.secrets.awsCostExplorerSecretAccessKeyId ||
-    !params.secrets.awsCostExporerRegion == null) {
-    return { text: "You must create secrets for awsCostExplorerAccessKeyId, awsCostExplorerSecretAccessKeyId " +
-      "and awsCostExporerRegion to use this command " };
+  
+  if (!params.secrets || !params.secrets.awsCostExplorerAccessKeyId || !params.secrets.awsCostExplorerSecretAccessKey ||
+    !params.secrets.awsCostExplorerRegion) {
+    return { body: { text: "You must create secrets for awsCostExplorerAccessKeyId, awsCostExplorerSecretAccessKeyId " +
+      "and awsCostExporerRegion to use this command " } };
   }
 
   var costexplorer = new AWS.CostExplorer({
     accessKeyId: params.secrets.awsCostExplorerAccessKeyId,
-    secretAccessKey: params.secrets.awsCostExplorerSecretAccessKeyId,
+    secretAccessKey: params.secrets.awsCostExplorerSecretAccessKey,
     region: params.secrets.awsCostExplorerRegion
   });
   
@@ -25,7 +27,7 @@ function main(params) {
   let start = firstOfThisMonth.toISOString().substring(0, 10);
   let end = firstOfNextMonth.toISOString().substring(0, 10);
 
-  var params = {
+  var costParams = {
     "TimePeriod" : {
       "Start" : start,
       "End" : end,
@@ -33,35 +35,35 @@ function main(params) {
     "Granularity" : "MONTHLY",
     "GroupBy" : [ { Key: "SERVICE", Type: "DIMENSION" } ],
     "Metrics" : ["AmortizedCost"]
-  }
+  };
 
-  return costexplorer.getCostAndUsage(params).promise().then(
+  return costexplorer.getCostAndUsage(costParams).promise().then(
     function(data) {
 
       // for debugging:
       // console.log(JSON.stringify(data, null, 4));
 
       let byServiceString = "";
-      let groups = data["ResultsByTime"][0]["Groups"];
+      let groups = data.ResultsByTime[0].Groups;
       let totalCost = 0.0;
       let unit;
       let hasMultipleUnits = 0;
       let i, n = 0;
       for (i = 0; i < groups.length; i++) {
-        let cost = groups[i]["Metrics"]["AmortizedCost"]["Amount"];
+        let cost = groups[i].Metrics.AmortizedCost.Amount;
         if (cost == 0 ) {
           continue;
         }
         cost = parseFloat(cost);
 
         // make the service names shorter
-        let serviceName =  groups[i]["Keys"][0];
+        let serviceName =  groups[i].Keys[0];
         serviceName = serviceName.replace("Amazon ", "");
         serviceName = serviceName.replace("Amazon", "");
         serviceName = serviceName.replace("AWS", "");
 
         totalCost += cost;
-        let thisUnit  = groups[i]["Metrics"]["AmortizedCost"]["Unit"];
+        let thisUnit  = groups[i].Metrics.AmortizedCost.Unit;
         if (thisUnit == "USD") {
           costInUnits = "$" + cost.toFixed(2);
         } else {
@@ -93,11 +95,11 @@ function main(params) {
       // console.log("Month-to-date AWS charges: " + totalCostString);
       // console.log("Charges by service: " + byServiceString);
 
-      return body: {  response_type: 'in_channel', text: "Month-to-date AWS charges: " + totalCostString + "\n\nCharges by service: " + byServiceString };
+      return { body: {  response_type: 'in_channel', text: "Month-to-date AWS charges: " + totalCostString + "\n\nCharges by service: " + byServiceString } };
     },
     function(error) {
       // console.log(err);
-      return {  response_type: 'in_channel', text: "Error: " + err  + " AWS version: " + AWS.VERSION};
+      return { body: {  response_type: 'in_channel', text: "Error: " + error } };
     }
   );
 }
