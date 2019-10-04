@@ -1,3 +1,5 @@
+// jshint esversion: 8
+
 // this code is from: https://www.tomas-dvorak.cz/posts/nodejs-request-without-dependencies/
 // it allows us to do a promise https request without any dependencies
 
