@@ -93,7 +93,7 @@ function main(params) {
       // console.log("Month-to-date AWS charges: " + totalCostString);
       // console.log("Charges by service: " + byServiceString);
 
-      return {  response_type: 'in_channel', text: "Month-to-date AWS charges: " + totalCostString + "\n\nCharges by service: " + byServiceString };
+      return body: {  response_type: 'in_channel', text: "Month-to-date AWS charges: " + totalCostString + "\n\nCharges by service: " + byServiceString };
     },
     function(error) {
       // console.log(err);
