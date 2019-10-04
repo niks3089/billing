@@ -1,3 +1,3 @@
 function main(params) {
- return { "text": "host_add called" }
+ return body: { "text": "host_add called" }
 }
