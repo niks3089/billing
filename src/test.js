@@ -1,3 +1,3 @@
 function main(params) {
- return { body: { "text": "test called" } };
+ return { body: { "text": "test called - modified" } };
 }
