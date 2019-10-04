@@ -21,8 +21,8 @@ const getContent = function(url) {
       response.on('end', () => resolve(body.join('')));
     });
     // handle connection errors of the request
-    request.on('error', (err) => reject(err))
-    })
+    request.on('error', (err) => reject(err));
+    });
 };
 
 //
@@ -51,7 +51,7 @@ const getContent = function(url) {
 // And Datadog has a rate limit of 60 requests per hour to their usage API at this time
 //
 function calcHostsCosts(json) {
-  let numHours = json["usage"].length;
+  let numHours = json.usage.length;
   if (numHours == 0) {
     return { cost: 0, forwardCost: 0, text: "no data" };
   }
@@ -60,17 +60,17 @@ function calcHostsCosts(json) {
   let apmHostsByHour = [];
   let i;
   for (i = 0; i < numHours; i++) {
-    hostsByHour.push(json["usage"][i]["host_count"]);
-    apmHostsByHour.push(json["usage"][i]["apm_host_count"]);
+    hostsByHour.push(json.usage[i].host_count);
+    apmHostsByHour.push(json.usage[i].apm_host_count);
   }
-  let maxHostCount = Math.max(...hostsByHour)
-  let maxApmHostCount = Math.max(...apmHostsByHour)
+  let maxHostCount = Math.max(...hostsByHour);
+  let maxApmHostCount = Math.max(...apmHostsByHour);
   let recentHostCount = hostsByHour[numHours - 1];
   let recentApmHostCount = apmHostsByHour[numHours - 1];
 
   hostsByHour.sort((a, b) => b - a);
   apmHostsByHour.sort((a, b) => b - a);
-  let n99 = Math.floor(numHours * .01);
+  let n99 = Math.floor(numHours * 0.01);
   let billingHostCount =  hostsByHour[n99];
   let billingApmHostCount = apmHostsByHour[n99];
 
@@ -84,7 +84,7 @@ function calcHostsCosts(json) {
 }
 
 function calcMetricsCosts(json) {
-  numHours = json["usage"].length;
+  numHours = json.usage.length;
   if (numHours == 0) {
     return { cost: 0, forwardCost: 0, text: "no data" };
   }
@@ -95,23 +95,23 @@ function calcMetricsCosts(json) {
   let metricsByHour = [];
   let i;
   for (i = 0; i < numHours; i++) {
-    metricsByHour.push(json["usage"][i]["num_custom_timeseries"]);
+    metricsByHour.push(json.usage[i].num_custom_timeseries);
   }
-  let maxMetricsCount = Math.max(...metricsByHour)
+  let maxMetricsCount = Math.max(...metricsByHour);
   let recentMetricsCount = metricsByHour[numHours - 1];
 
   metricsByHour.sort((a, b) => b - a);
-  let n99 = Math.floor(numHours * .01);
+  let n99 = Math.floor(numHours * 0.01);
   let billingMetricsCount =  metricsByHour[n99];
 
   let cost = billingMetricsCount * 0.05;
-  let forwardCost = recentMetricsCount * .05;
+  let forwardCost = recentMetricsCount * 0.05;
 
   return { cost: cost, forwardCost: forwardCost, text: "metricsCost=" + cost.toFixed(2) + " forwardMetricsCost=" + forwardCost.toFixed(2) + " billingMetrics=" + billingMetricsCount + " recentMetrics=" + recentMetricsCount + " maxMetricsCount=" + maxMetricsCount };
 }
 
 function calcSyntheticsCosts(json) {
-  numHours = json["usage"].length;
+  numHours = json.usage.length;
   if (numHours == 0) {
     return { cost: 0, forwardCost: 0, text: "no data" };
   }
@@ -119,7 +119,7 @@ function calcSyntheticsCosts(json) {
   let recentCount = 0;
   let totalSynthetics = 0;
   for (i = 0; i < numHours; i++) {
-    let c = json["usage"][i]["check_calls_count"];
+    let c = json.usage[i].check_calls_count;
     totalSynthetics += c;
     recentCount = c;
   }
@@ -164,7 +164,7 @@ function main(params) {
       url = "https://api.datadoghq.com/api/v1/usage/timeseries?";
       return getContent(url + query).then(
         function(timeseriesHtml) {
-          url = "https://api.datadoghq.com/api/v1/usage/synthetics?"
+          url = "https://api.datadoghq.com/api/v1/usage/synthetics?";
           return getContent(url + query).then(
             function(syntheticsHtml) {
               return calcCosts(JSON.parse(hostsHtml), JSON.parse(timeseriesHtml), JSON.parse(syntheticsHtml));
