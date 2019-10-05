@@ -48,7 +48,7 @@ const getContent = function(url) {
 // for those hours. We exclude the top 1% to reduce the impact of spikes in usage on your bill. The billable count
 // of custom metrics is based on the average number of custom metric hours for the month. See your Usage in Datadog."
 //
-// And Datadog has a rate limit of 60 requests per hour to their usage API at this time
+// And Datadog has a rate limit of 60 requests per hour per-API key to their usage API at this time
 //
 function calcHostsCosts(json) {
   let numHours = json.usage.length;
