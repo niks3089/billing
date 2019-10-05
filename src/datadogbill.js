@@ -56,17 +56,28 @@ function calcHostsCosts(json) {
     return { cost: 0, forwardCost: 0, text: "no data" };
   }
 
+  let numBadHosts = 0;
   let hostsByHour = [];
   let apmHostsByHour = [];
+  let recentHostCount = 0;
+  let recentApmHostCount = 0;
   let i;
   for (i = 0; i < numHours; i++) {
-    hostsByHour.push(json.usage[i].host_count);
-    apmHostsByHour.push(json.usage[i].apm_host_count);
+    let hostCount = json.usage[i].host_count;
+    let apmHostCount = json.usage[i].host_count;
+
+    // datadog's usage logging has problems where recent host fields are null for unknown reasons
+    if (!hostCount || !apmHostCount) {
+      numBadHosts = numBadHosts + 1;
+    } else {
+      hostsByHour.push(hostCount);
+      recentHostCount = hostCount;
+      apmHostsByHour.push(apmHostCount);
+      recentApmHostCount = apmHostCount;
+    }
   }
   let maxHostCount = Math.max(...hostsByHour);
   let maxApmHostCount = Math.max(...apmHostsByHour);
-  let recentHostCount = hostsByHour[numHours - 1];
-  let recentApmHostCount = apmHostsByHour[numHours - 1];
 
   hostsByHour.sort((a, b) => b - a);
   apmHostsByHour.sort((a, b) => b - a);
@@ -77,7 +88,7 @@ function calcHostsCosts(json) {
   let cost = billingHostCount * 18 + billingApmHostCount * 36;
   let forwardCost = recentHostCount * 18 + recentApmHostCount * 36;
 
-  return { cost: cost, forwardCost: forwardCost, text: "billingHostCount=" + billingHostCount +
+  return { cost: cost, forwardCost: forwardCost, text: "numBadHosts=" + numBadHosts + " billingHostCount=" + billingHostCount +
    " billingApmHostCount=" + billingApmHostCount + " maxHostCount=" + maxHostCount +
    " recentHostCount=" + recentHostCount + " recentApmHostCount=" + recentApmHostCount +
    " maxApmHostCount=" + maxApmHostCount + " numHours=" + numHours + " 99th=#" + n99 };
