@@ -64,7 +64,7 @@ function calcHostsCosts(json) {
   let i;
   for (i = 0; i < numHours; i++) {
     let hostCount = json.usage[i].host_count;
-    let apmHostCount = json.usage[i].host_count;
+    let apmHostCount = json.usage[i].apm_host_count;
 
     // datadog's usage logging has problems where recent host fields are null for unknown reasons
     if (!hostCount || !apmHostCount) {
