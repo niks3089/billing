@@ -155,12 +155,13 @@ function calcCosts(hostsJson, timeseriesJson, syntheticsJson) {
 }
 
 function main(params) {
-  if (!params.secrets || !params.secrets.datadogApiKey || !params.secrets.datadogApplicationKey) {
+  if (!params.__secrets || !params.__secrets.datadogApiKey || !params.__secrets.datadogApplicationKey) {
     return { body: { text: "You must create secrets for datadogApiKey and datadogApplicationKey to use this command " } };
   }
+
   
-  const api_key = params.secrets.datadogApiKey;
-  const application_key = params.secrets.datadogApplicationKey;
+  const api_key = params.__secrets.datadogApiKey;
+  const application_key = params.__secrets.datadogApplicationKey;
 
   let now = new Date();
   let firstOfThisMonth = new Date(now.getUTCFullYear(), now.getUTCMonth(), 1);
