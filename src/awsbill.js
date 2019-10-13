@@ -3,16 +3,16 @@
 function main(params) {
   AWS = require('aws-sdk');
   
-  if (!params.secrets || !params.secrets.awsCostExplorerAccessKeyId || !params.secrets.awsCostExplorerSecretAccessKey ||
-    !params.secrets.awsCostExplorerRegion) {
+  if (!params.__secrets || !params.__secrets.awsCostExplorerAccessKeyId || !params.__secrets.awsCostExplorerSecretAccessKey ||
+    !params.__secrets.awsCostExplorerRegion) {
     return { body: { text: "You must create secrets for awsCostExplorerAccessKeyId, awsCostExplorerSecretAccessKeyId " +
       "and awsCostExporerRegion to use this command " } };
   }
 
   var costexplorer = new AWS.CostExplorer({
-    accessKeyId: params.secrets.awsCostExplorerAccessKeyId,
-    secretAccessKey: params.secrets.awsCostExplorerSecretAccessKey,
-    region: params.secrets.awsCostExplorerRegion
+    accessKeyId: params.__secrets.awsCostExplorerAccessKeyId,
+    secretAccessKey: params.__secrets.awsCostExplorerSecretAccessKey,
+    region: params.__secrets.awsCostExplorerRegion
   });
   
   // determine billing period start/end. toISOString() is UTC (GMT) time, which is what AWS bills in
