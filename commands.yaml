@@ -9,7 +9,7 @@ commands:
     sourcePath: /datadogbill.js
     description: Shows your Datadog bill
     options:
-      -name: detail
+      - name: detail
   test:
     sourcePath: /test.js
     description: Test command
