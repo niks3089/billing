@@ -1,4 +1,4 @@
-sourceBasePath: https://raw.githubusercontent.com/ericswildens/shepard/master/src
+sourceBasePath: https://raw.githubusercontent.com/ericswildens/billing/master/src
 commands:
   awsbill:
     sourcePath: /awsbill.js
